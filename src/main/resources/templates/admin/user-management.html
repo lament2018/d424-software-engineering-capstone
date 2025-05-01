@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <link rel="stylesheet" th:href="@{/css/custom.css}">
+
+</head>
+<body class="body-bg">
+<!--nav class="navbar navbar-expand-lg navbar-custom fixed-top shadow">
+    <div class="container-fluid">
+        <a class="navbar-brand" th:href="@{/dashboard}">Schedule Portal</a>
+        <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+                <li class="nav-item">
+                    <a th:if="${role == 'ROLE_ADMIN'}" class="nav-link" th:href="@{/admin/user-management}">User Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/report}">Reports</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/schedule/schedule-management}">Schedule Management</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/task/task-management}">Task Management</a>
+                </li>
+            </ul>
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item">
+                    <a class="nav-link logout-link" th:href="@{/logout}">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>-->
+    <div th:replace="global/navbar :: navbar"></div>
+    <div class="container mt-5">
+        <h2 class="text-primary mb-4">User Management</h2>
+        <div th:if="${successMessage}" class="alert alert-success mt-3" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-danger mt-3" th:text="${errorMessage}"></div>
+
+        <button class="btn btn-blue mb-3" data-bs-toggle="modal" data-bs-target="#createUserModal">Create User</button>
+
+        <table id="userTable" class="table table-striped">
+            <thead class="table-primary">
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}"
+                    th:classappend="${!user.active} ? 'table-secondary text-muted'">
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.firstName + ' ' + user.lastName}"></td>
+                    <td th:text="${user.role}"></td>
+                    <!--<td th:text="${user.active} ? 'Active' : 'Inactive'"></td>-->
+                    <td>
+                        <div th:if="${user.active}">
+                            <button class="btn btn-sm btn-warning" data-bs-toggle="modal"
+                                    data-bs-target="#resetPasswordModal"
+                                    th:attr="data-user-id=${user.userId},
+                                             data-user-email=${user.email}">Reset Password</button>
+                            <form th:action="@{/admin/terminate-user}" method="post" class="d-inline terminate-form">
+                                <input type="hidden" name="userId" th:value="${user.userId}">
+                                <button type="submit"
+                                        th:class="'btn btn-sm ' + (${user.active} ? 'btn-danger' : 'btn-success')"
+                                        th:text="${user.active} ? 'Terminate' : 'Reinstate'"></button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div><!--End Div table-->
+    <!--Create User Modal-->
+    <div class="modal fade" id="createUserModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form th:action="@{/admin/create-user}" method="post">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create User</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <input type="text" name="firstName" class="form-control mb-2" placeholder="First Name" required>
+                        <input type="text" name="lastName" class="form-control mb-2" placeholder="Last Name" required>
+                        <input type="email" name="email" class="form-control mb-2" placeholder="Email" required>
+                        <select name="role" class="form-control" required>
+                            <option value="">Select Role</option>
+                            <option value="USER">USER</option>
+                            <option value="ADMIN">ADMIN</option>
+                        </select>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-blue">Create</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!--Reset Password Modal-->
+<!-- Reset Password Modal (only once) -->
+<div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form th:action="@{/admin/reset-password}" method="post">
+                <input type="hidden" name="userId" id="resetUserId">
+                <div class="modal-header">
+                    <h5 class="modal-title">Reset Password for <span id="resetUserEmail"></span></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="password" name="newPassword" class="form-control" placeholder="New Password" required>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-blue">Reset</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- jQuery and DataTables JS -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <script>
+        $(document).ready(function () {
+            $('#userTable').DataTable({
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "info": true
+            });
+        });
+        const resetPasswordModal = document.getElementById('resetPasswordModal');
+        resetPasswordModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            const userEmail = button.getAttribute('data-user-email');
+            document.getElementById('resetUserId').value = userId;
+            document.getElementById('resetUserEmail').textContent = userEmail;
+        });
+        document.querySelectorAll('.terminate-form').forEach(f => {
+            f.addEventListener('submit',function (e){
+                e.preventDefault();
+                const button = f.querySelector('button');
+                const action = button.textContent.trim();
+
+                Swal.fire({
+                    title: `Are you sure you want to ${action.toLowerCase()} this user?`,
+                    text: "This will inactivate the user and remove task assignments.",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: `Yes, ${action}`,
+                    cancelButtonText: 'Cancel',
+                    confirmButtonColor: action === 'Terminate' ? '#dc3545' : '#198754'
+                }).then((result) =>{
+                    if(result.isConfirmed){
+                        f.submit();
+                    }
+                });
+            });
+
+        });
+    </script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+
+    /* Success Toast */
+    /* Show only if successMessage exists */
+    /*]]>*/
+</script>
+<script th:inline="javascript" th:if="${successMessage != null}">
+    Swal.fire({
+        toast: true,
+        icon: 'success',
+        title: "[[${successMessage}]]",
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+</script>
+
+<script th:inline="javascript" th:if="${errorMessage != null}">
+    Swal.fire({
+        toast: true,
+        icon: 'error',
+        title: "[[${errorMessage}]]",
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 3000
+    });
+</script>
+
+
+
+</body>
+</html>

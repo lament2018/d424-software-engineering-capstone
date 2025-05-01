@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="navbar">
+    <nav class="navbar navbar-expand-lg navbar-custom fixed-top shadow">
+        <div class="container-fluid">
+            <a class="navbar-brand" th:href="@{/dashboard}">Schedule Portal</a>
+            <div class="d-flex align-items-center d-md-none">
+                    <span th:if="${role == 'ADMIN'}" class="role-badge admin" style="color:#FFC107; font-weight: 800; margin-right: 0.5rem;">Admin</span>
+                    <span th:if="${role == 'USER'}" class="role-badge user" style="font-weight: 800; color: #212529 !important;padding-right: 1rem; ">User</span>
+                <span th:classappend="${role} == 'ADMIN' ? ' bg-warning text-white' : ' bg-dark text-white'"
+                      class="badge rounded-circle text-white"
+                      style="width: 32px; height: 32px; display: inline-flex !important;
+                       align-items: center; justify-content: center; margin-right: 0.5rem;"
+                      th:text="${userInitials}"></span>
+                <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+            </div>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a th:if="${role == 'ADMIN'}" class="nav-link" th:href="@{/admin/user-management}">User Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/report-management}">Reports</a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:if="${role == 'ADMIN'}" class="nav-link" th:href="@{/schedule-management}">Schedule Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/task-management}">Task Management</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" th:href="@{/my-profile}">My Profile</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto d-md-none">
+                    <li class="nav-item">
+                        <a class="nav-link logout-link" th:href="@{/logout}">Logout</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- Desktop View: initials + logout (only on md and up) -->
+            <div class="d-none d-md-flex align-items-center ms-3">
+                <span th:if="${role == 'ADMIN'}" class="role-badge admin" style="color:#FFC107; font-weight: 800; margin-right: 0.5rem;">Admin</span>
+                <span th:if="${role == 'USER'}" class="role-badge user" style="font-weight: 800; color: #212529 !important;padding-right: 1rem; ">User</span>
+                    <span th:classappend="${role} == 'ADMIN' ? ' bg-warning text-white' : ' bg-dark text-white'"
+                          class="badge rounded-circle text-white"
+                          style="width: 32px; height: 32px; display: inline-flex !important;
+                       align-items: center; justify-content: center; margin-right: 0.5rem;"
+                          th:text="${userInitials}"></span>
+                <a th:href="@{/logout}" class="nav-link logout-link">Logout</a>
+            </div>
+        </div>
+    </nav>
+</div>
+
+</body>
+</html>
