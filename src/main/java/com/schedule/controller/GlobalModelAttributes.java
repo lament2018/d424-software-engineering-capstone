@@ -2,6 +2,7 @@ package com.schedule.controller;
 
 import com.schedule.model.User;
 import com.schedule.repository.UserRepository;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -25,5 +26,9 @@ public class GlobalModelAttributes {
                 model.addAttribute("role", user.getRole().name());
             });
         }
+    }
+    @ModelAttribute
+    public void addGlobalAttributes(Model model, HttpServletRequest request) {
+        model.addAttribute("currentPath", request.getRequestURI());
     }
 }

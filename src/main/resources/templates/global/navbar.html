@@ -22,19 +22,29 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a th:if="${role == 'ADMIN'}" class="nav-link" th:href="@{/admin/user-management}">User Management</a>
+                        <a th:if="${role == 'ADMIN'}" class="nav-link"
+                           th:classappend="${currentPath.startsWith('/admin/user-management')} ? ' active'"
+                           th:href="@{/admin/user-management}">User Management</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/report-management}">Reports</a>
+                        <a th:if="${role == 'ADMIN'}" class="nav-link"
+                           th:classappend="${currentPath.startsWith('/schedule-management') or (currentPath.contains('/schedules/') and currentPath.contains('/tasks'))} ? ' active'"
+                           th:href="@{/schedule-management}">Schedule Management</a>
                     </li>
                     <li class="nav-item">
-                        <a th:if="${role == 'ADMIN'}" class="nav-link" th:href="@{/schedule-management}">Schedule Management</a>
+                        <a class="nav-link"
+                           th:classappend="${currentPath.startsWith('/task-management')} ? ' active'"
+                           th:href="@{/task-management}">Task Management</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/task-management}">Task Management</a>
+                        <a class="nav-link"
+                           th:classappend="${currentPath.startsWith('/report-management') or currentPath.contains('/reports/')} ? ' active'"
+                           th:href="@{/report-management}">Report Management</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" th:href="@{/my-profile}">My Profile</a>
+                        <a class="nav-link"
+                           th:classappend="${currentPath.startsWith('/my-profile')} ? ' active'"
+                           th:href="@{/my-profile}">My Profile</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav ms-auto d-md-none">

@@ -13,6 +13,11 @@
 .nav-link:hover{
     color: #FFC107 !important;
 }
+.nav-link.active{
+    font-weight: bold;
+    color: #FFC107 !important;;
+    border-bottom: 2px solid #FFC107;
+}
 .logout-link{
     color: #F67280 !important;
 }
