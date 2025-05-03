@@ -88,8 +88,7 @@
                     <div th:if="${role == 'ADMIN'}">
                         <label>Assign to User</label>
                         <select id="editTaskAssigned" name="assignedUserId"
-                                class="form-select mb-2"
-                                th:attr="${role == 'ADMIN'} ? 'required' : ''">
+                                class="form-select mb-2">
                             <option th:each="user : ${users}" th:value="${user.userId}"
                                     th:text="${user.firstName + ' ' + user.lastName}"></option>
                         </select>
