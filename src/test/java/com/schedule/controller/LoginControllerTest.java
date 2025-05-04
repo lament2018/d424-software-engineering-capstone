@@ -126,4 +126,33 @@ class AuthControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrlPattern("**/home"));
     }
+
+    @Test
+    @DisplayName("POST /forgot-password - should reset password and redirect to login with success message")
+    void shouldProcessForgotPasswordSuccessfully() throws Exception {
+        com.schedule.model.User testUser = new com.schedule.model.User();
+        testUser.setEmail("john.doe@testmail.com");
+        testUser.setPasswordHash(passwordEncoder.encode("Hercules#2011!"));
+        testUser.setFirstName("John");
+        testUser.setLastName("Doe");
+
+        when(userRepository.findByEmail("john.doe@testmail.com")).thenReturn(Optional.of(testUser));
+
+        mockMvc.perform(post("/forgot-password")
+        .param("email","john.doe@testmail.com")
+        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home"))
+                .andExpect(flash().attribute("successMessage", "Password reset email sent."));
+
+    }
+
+    @Test
+    @DisplayName("GET /logout - should redirect to /home after logout")
+    void shouldRedirectAfterLogout() throws Exception {
+        mockMvc.perform(get("/logout")
+        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/home?logout"));
+    }
 }
