@@ -1,43 +1,26 @@
 package com.schedule.controller;
 
 
-import com.schedule.repository.TaskRepository;
-import com.schedule.repository.UserRepository;
-import com.schedule.controller.*;
-import com.schedule.security.CustomAuthenticationSuccessHandler;
-import com.schedule.security.CustomerDetailsService;
-import com.schedule.service.UserService;
-import com.schedule.service.EmailService;
-import com.schedule.model.*;
-import com.schedule.security.WebSecurityConfig;
-import jakarta.persistence.Id;
+import com.schedule.repository.*;
+import com.schedule.security.*;
+import com.schedule.service.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.web.WebSecurityConfigurer;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 
-import java.util.Optional;
-import java.util.Collections;
+import java.util.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.hamcrest.Matchers.containsString;
@@ -93,7 +76,7 @@ class AuthControllerTest {
         testUser.setPasswordHash(passwordEncoder.encode("Hercules#2011!"));
         testUser.setFirstName("John");
         testUser.setLastName("Doe");
-        testUser.setRole(com.schedule.model.User.Role.ADMIN); // Make sure this matches your enum
+        testUser.setRole(com.schedule.model.User.Role.ADMIN);
 
         when(userRepository.findByEmail("john.doe@testmail.com")).thenReturn(Optional.of(testUser));
         when(taskRepository.findByAssignedUser(any(com.schedule.model.User.class))).thenReturn(Collections.emptyList());
