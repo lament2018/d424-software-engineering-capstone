@@ -21,6 +21,7 @@
             <th>Role</th>
             <th>Status</th>
             <th># of Tasks Assigned</th>
+            <th>Task Created</th>
         </tr>
         </thead>
         <tbody>
@@ -30,6 +31,7 @@
             <td th:text="${user.role}"></td>
             <td th:text="${user.active} ? 'Active' : 'Inactive'"></td>
             <td th:text="${taskCounts[user.userId] != null ? taskCounts[user.userId] : 0}"></td>
+            <td th:text="${latestTaskTime[user.userId] != null ? #temporals.format(latestTaskTime[user.userId], 'yyyy-MM-dd HH:mm') : 'N/A'}"></td>
         </tr>
         </tbody>
     </table>

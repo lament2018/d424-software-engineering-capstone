@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,10 +48,20 @@ public class ReportController {
                 .filter(task -> task.getAssignedUser() != null)
                 .collect(Collectors.groupingBy(task -> task.getAssignedUser().getUserId(), Collectors.counting()));
 
+        Map<Long, LocalDateTime> latestTaskTime = new HashMap<>();
+        taskRepository.findAll().stream()
+                .collect(Collectors.groupingBy(
+                        task -> task.getAssignedUser().getUserId(),
+                        Collectors.mapping(Task::getCreatedAt, Collectors.maxBy(Comparator.naturalOrder()))
+                ))
+                .forEach((userId, maxDateOpt) ->
+                        maxDateOpt.ifPresent(date -> latestTaskTime.put(userId, date)));
+
 
 
         model.addAttribute("users", users);
         model.addAttribute("taskCounts", taskCounts);
+        model.addAttribute("latestTaskTime", latestTaskTime);
         return "reports/user-activity";
     }
 }
