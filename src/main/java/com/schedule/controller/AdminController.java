@@ -40,7 +40,7 @@ public class AdminController {
         }
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
-        return "/admin/user-management";
+        return "admin/user-management";
     }
     @PostMapping("/create-user")
     public String createUser(@RequestParam String firstName,
